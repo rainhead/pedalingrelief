@@ -10,6 +10,8 @@ django-stubs = "*"
 gunicorn = "*"
 django-heroku = "*"
 whitenoise = "*"
+pipenv = "*"
+pip = "*"
 
 [dev-packages]
 
