@@ -17,6 +17,9 @@ class Feature(models.Model):
     """Physical feature or aspect of pantry"""
     name = models.CharField(max_length=50)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class FoodBank(models.Model):
     address = models.TextField(max_length=500)
@@ -25,14 +28,23 @@ class FoodBank(models.Model):
     # location = models.PointField(geography=True)
     name = models.CharField(max_length=50)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Item(models.Model):
     """A type of goods that can be stocked at a pantry"""
     name = models.CharField(max_length=50)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Pantry(models.Model):
     """A physical container for goods"""
+
+    class Meta:
+        verbose_name_plural = 'Pantries'
 
     class PantrySize(models.TextChoices):
         SMALL = 'small'
@@ -58,10 +70,19 @@ class Pantry(models.Model):
     slug = models.SlugField(max_length=50, db_index=True)
     type = models.TextField(max_length=20, choices=PantryType.choices, default=PantryType.PANTRY)
 
+    def __str__(self) -> str:
+        return self.address
+
 
 class Person(models.Model):
+    class Meta:
+        verbose_name_plural = 'People'
+
     email = models.EmailField()
     name = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Restock(models.Model):
@@ -96,4 +117,7 @@ class DeliveryRoute(models.Model):
     food_bank = models.ForeignKey('FoodBank', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     pantries = models.ManyToManyField('Pantry')
+
+    def __str__(self) -> str:
+        return self.name
 
