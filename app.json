@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/crcastle/schemastore/06174ef73fcaa1f9734e4aed8b7d40e6df586f76/src/schemas/json/app.json",
+  "name": "Pedaling Relief",
+  "env": {
+    "SECRET_KEY": {
+      "generator": "secret",
+      "required": true
+    }
+  },
+  "environments": {
+    "test": {
+      "addons": ["heroku-postgresql:in-dyno"]
+    }
+  }
+}
