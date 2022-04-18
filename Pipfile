@@ -9,6 +9,7 @@ psycopg2 = "*"
 django-stubs = "*"
 gunicorn = "*"
 django-heroku = "*"
+whitenoise = "*"
 
 [dev-packages]
 
