@@ -32,7 +32,7 @@ CREATE VIEW estimated_pantry_status AS (
       (extract(epoch FROM current_timestamp) - extract(epoch FROM restock_date))
         / (60*60*24) AS restock_days_ago
     FROM core_restock WHERE pantry_id = core_pantry.id ORDER BY restock_date DESC LIMIT 1
-  ) AS last_restock ON 1=1
+  ) AS last_restock ON true
 )
         """, "DROP VIEW estimated_pantry_status")
     ]

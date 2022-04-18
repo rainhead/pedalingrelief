@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = environ.get('SECRET_KEY', 'django-insecure-$)wcoa_ig92$zm-&q#t2k8k6da(3ww%*ya=grk4_i&7m8i5spk')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG', '0') == '1'
 
 ALLOWED_HOSTS = ['127.0.0.1', '::1']
 
