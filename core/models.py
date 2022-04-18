@@ -1,4 +1,6 @@
 from django.db import models
+from psqlextra.manager import PostgresManager
+from psqlextra.types import ConflictAction
 
 
 class EstimatedPantryStatus(models.Model):
@@ -17,11 +19,15 @@ class Feature(models.Model):
     """Physical feature or aspect of pantry"""
     name = models.CharField(max_length=50)
 
+    objects = PostgresManager()
+
     def __str__(self) -> str:
         return self.name
 
 
 class FoodBank(models.Model):
+    objects = PostgresManager()
+
     address = models.TextField(max_length=500)
     contact_person = models.ForeignKey('Person', on_delete=models.RESTRICT)
     description = models.TextField(max_length=500, null=True)
@@ -34,7 +40,17 @@ class FoodBank(models.Model):
 
 class Item(models.Model):
     """A type of goods that can be stocked at a pantry"""
+
+    objects = PostgresManager()
+
     name = models.CharField(max_length=50)
+
+    @classmethod
+    def upsert(cls, *names) -> models.QuerySet['Item']:
+        cls.objects.on_conflict(['name'], ConflictAction.NOTHING).bulk_insert(
+            [dict(name=name) for name in names]
+        )
+        return cls.objects.where(name__in=names)
 
     def __str__(self) -> str:
         return self.name
@@ -54,6 +70,8 @@ class Pantry(models.Model):
     class PantryType(models.TextChoices):
         FRIDGE = 'fridge'
         PANTRY = 'pantry'
+
+    objects = PostgresManager()
 
     address = models.TextField(max_length=500)
     # delivery_area = models.PolygonField()
@@ -78,8 +96,18 @@ class Person(models.Model):
     class Meta:
         verbose_name_plural = 'People'
 
+    objects = PostgresManager()
+
     email = models.EmailField()
     name = models.CharField(max_length=50)
+
+    @classmethod
+    def upsert_by_email(cls, email: str, *, name: str) -> 'Person':
+        return (
+            cls.objects
+            .on_conflict(['email'], ConflictAction.UPDATE)
+            .insert_and_get(email=email, name=name)
+        )
 
     def __str__(self) -> str:
         return self.name
@@ -95,7 +123,10 @@ class Restock(models.Model):
             models.Index(fields=['pantry', 'restock_date'])
         ]
 
+    objects = PostgresManager()
+
     cleanliness_pct = models.FloatField()
+    comment = models.TextField(max_length=500)
     needs = models.ManyToManyField('Item')
     pantry = models.ForeignKey('Pantry', on_delete=models.CASCADE)
     pct_full_on_arrival = models.FloatField()
@@ -112,6 +143,8 @@ class DeliveryRoute(models.Model):
     class Meta:
         get_latest_by = 'date'
         unique_together = (('food_bank', 'date', 'name'),)
+
+    objects = PostgresManager()
 
     date = models.DateField()
     food_bank = models.ForeignKey('FoodBank', on_delete=models.CASCADE)

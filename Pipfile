@@ -12,6 +12,7 @@ django-heroku = "*"
 whitenoise = "*"
 pipenv = "*"
 pip = "*"
+django-postgres-extra = "*"
 
 [dev-packages]
 
