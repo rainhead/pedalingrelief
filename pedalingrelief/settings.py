@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'pedalingrelief.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'psqlextra.backend',
         'NAME': 'pedalingrelief',
     }
 }
