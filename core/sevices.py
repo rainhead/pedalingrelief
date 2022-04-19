@@ -1,5 +1,5 @@
+import datetime
 import logging
-from datetime import datetime
 from typing import Optional
 
 from core.models import *
@@ -20,11 +20,11 @@ def receive_restock_post(
     needs: list[str],
     pantry: int,
     photo: Optional[str],
-    restock_date: datetime,
+    restock_date: datetime.date,
     reporter_email: Optional[str],
     reporter_name: str,
-    submitted_at: datetime,
-) -> None:
+    submitted_at: datetime.datetime,
+) -> Restock:
     reporter = Person.upsert_by_email(reporter_email, name=reporter_name) if reporter_email else None
     restock = Restock(
         cleanliness_pct=score_to_pct(cleanliness_score),
@@ -39,4 +39,5 @@ def receive_restock_post(
     )
     restock.save()
     restock.needs.set(Item.upsert(*needs))
-    pass
+
+    return restock

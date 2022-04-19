@@ -43,14 +43,14 @@ class Item(models.Model):
 
     objects = PostgresManager()
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
 
     @classmethod
     def upsert(cls, *names) -> models.QuerySet['Item']:
         cls.objects.on_conflict(['name'], ConflictAction.NOTHING).bulk_insert(
             [dict(name=name) for name in names]
         )
-        return cls.objects.where(name__in=names)
+        return cls.objects.filter(name__in=names)
 
     def __str__(self) -> str:
         return self.name
@@ -98,7 +98,7 @@ class Person(models.Model):
 
     objects = PostgresManager()
 
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     name = models.CharField(max_length=50)
 
     @classmethod
